@@ -1,0 +1,8 @@
+# Force LF on files that are read inside the Linux container. CRLF (which Git
+# may introduce on Windows checkouts) breaks tinyproxy config parsing and shell
+# shebangs.
+egress-proxy/tinyproxy.conf text eol=lf
+egress-proxy/filter         text eol=lf
+Dockerfile                  text eol=lf
+egress-proxy/Dockerfile     text eol=lf
+*.sh                        text eol=lf

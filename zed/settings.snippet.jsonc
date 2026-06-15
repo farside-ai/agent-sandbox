@@ -1,0 +1,23 @@
+// Merge this `agent_servers` block into Zed's settings.json.
+// Open it with the command palette: `zed: open settings`.
+//
+// These entries tell Zed to launch each agent INSIDE the running
+// `agent-sandbox` container and talk to it over stdio (ACP).
+//
+// Prerequisite: the container must be running — `make up`.
+// `docker exec -i` (interactive, no TTY) is required so Zed can pipe ACP
+// messages over stdin/stdout.
+{
+  "agent_servers": {
+    "Claude (sandbox)": {
+      "command": "docker",
+      "args": ["exec", "-i", "agent-sandbox", "claude-agent-acp"],
+      "env": {}
+    },
+    "Codex (sandbox)": {
+      "command": "docker",
+      "args": ["exec", "-i", "agent-sandbox", "codex-acp"],
+      "env": {}
+    }
+  }
+}

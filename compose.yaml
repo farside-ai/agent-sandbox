@@ -1,0 +1,46 @@
+name: agent-sandbox
+
+services:
+  sandbox:
+    build: .
+    image: agent-sandbox:latest
+    container_name: agent-sandbox
+    init: true               # reap zombies; clean shutdown of agent subprocesses
+    stop_grace_period: 2s
+
+    # Baseline hardening (cheap, no UX cost). The egress network wall is
+    # opt-in via compose.hardened.yaml — see the README "Hardening" section.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 1024
+    tmpfs:
+      - /tmp                 # writable scratch that never touches the host
+    # mem_limit: 8g          # uncomment to cap runaway memory (may stall big builds)
+
+    # The project you open in Zed is mounted at the SAME absolute path inside
+    # the container. Zed sends that absolute path as the agent's working
+    # directory (ACP `cwd`), so the path must exist identically in here.
+    working_dir: ${WORKSPACE_DIR:?set WORKSPACE_DIR in .env to your project's absolute path}
+
+    environment:
+      # Option A auth: keys are read from .env. Blank = unset (use in-container login).
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      CODEX_API_KEY: ${CODEX_API_KEY:-}
+
+    volumes:
+      # Project, mirrored at its real path (see working_dir note above).
+      - ${WORKSPACE_DIR:?set WORKSPACE_DIR in .env}:${WORKSPACE_DIR:?set WORKSPACE_DIR in .env}
+      # Persist agent config/credentials across restarts (Option B auth:
+      # interactive login inside the container survives `make down`/`up`).
+      - claude-config:/home/node/.claude
+      - codex-config:/home/node/.codex
+
+    # Stay alive so Zed can `docker exec` agents into it on demand.
+    command: ["sleep", "infinity"]
+
+volumes:
+  claude-config:
+  codex-config:

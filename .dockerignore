@@ -1,0 +1,3 @@
+# The image is built entirely from npm/apt; nothing from the repo is copied in.
+# Keep the build context empty for fast, reproducible builds.
+*

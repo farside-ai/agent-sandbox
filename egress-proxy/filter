@@ -1,0 +1,23 @@
+# Egress allowlist — one hostname glob per line (fnmatch). Everything not
+# matched here is BLOCKED. Keep this list as small as your workflow allows;
+# every host you add is a host a hijacked agent could exfiltrate to.
+#
+# After editing, rebuild the proxy:  make harden-rebuild
+
+# --- Model APIs (required for the agents to work at all) -------------------
+api.anthropic.com
+api.openai.com
+chatgpt.com
+
+# --- Optional, OFF by default ----------------------------------------------
+# Uncommenting any of these widens the exfiltration surface — do it deliberately.
+#
+# Package registry (only needed if you let the agent run `npm install`):
+# registry.npmjs.org
+#
+# Common research / dependency hosts:
+# github.com
+# *.githubusercontent.com
+# codeload.github.com
+# pypi.org
+# files.pythonhosted.org

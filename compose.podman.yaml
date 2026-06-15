@@ -1,0 +1,16 @@
+# Podman overlay — for ROOTLESS Podman on Linux. Apply on top of compose.yaml:
+#
+#   podman compose -f compose.yaml -f compose.podman.yaml up -d
+#   (or simply: make RUNTIME=podman up   — the Makefile adds this automatically)
+#
+# Why: rootless Podman runs the container in a user namespace, so the container's
+# `node` user (uid 1000) maps to some high subuid on the host by default. Files
+# the agent writes into your mounted project would then be owned by that subuid,
+# not by you. `keep-id:uid=1000,gid=1000` maps YOUR host user onto uid/gid 1000
+# inside the container, so files in the bind mount stay owned by you.
+#
+# On macOS/Windows Podman runs inside a VM (like Docker Desktop) and this is
+# generally unnecessary, but it's harmless there.
+services:
+  sandbox:
+    userns_mode: "keep-id:uid=1000,gid=1000"

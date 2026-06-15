@@ -1,0 +1,48 @@
+# Opt-in egress network wall. Apply ON TOP of compose.yaml:
+#
+#   docker compose -f compose.yaml -f compose.hardened.yaml up -d
+#   (or: make harden)
+#
+# Effect: the sandbox loses direct internet access and can only reach the
+# outside through `egress-proxy`, which forwards to allowlisted hosts only
+# (see egress-proxy/filter). Zed still reaches the agents via `docker exec`,
+# which goes through the Docker daemon, not the network — so the ACP pipe is
+# unaffected. Blocks data exfiltration and curl|bash-style pull-and-run.
+
+services:
+  sandbox:
+    # Attaching an explicit network detaches the service from the default
+    # network, so this is its ONLY link — and it's internal (no route out).
+    networks:
+      - sandbox-internal
+    environment:
+      # Route all agent HTTP(S) traffic through the allowlisting proxy.
+      HTTP_PROXY: http://egress-proxy:8888
+      HTTPS_PROXY: http://egress-proxy:8888
+      http_proxy: http://egress-proxy:8888
+      https_proxy: http://egress-proxy:8888
+      NO_PROXY: localhost,127.0.0.1
+      no_proxy: localhost,127.0.0.1
+    depends_on:
+      - egress-proxy
+
+  egress-proxy:
+    build: ./egress-proxy
+    image: agent-egress-proxy:latest
+    container_name: agent-egress-proxy
+    init: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      # On the internal net (to receive the sandbox's requests) AND on a normal
+      # net (its sole route to the internet). The proxy is the only bridge.
+      - sandbox-internal
+      - egress
+
+networks:
+  sandbox-internal:
+    internal: true     # members have no route to the outside world
+  egress:              # normal network; only the proxy is attached to it

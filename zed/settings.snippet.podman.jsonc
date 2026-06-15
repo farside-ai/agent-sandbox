@@ -1,0 +1,19 @@
+// Podman variant of the agent_servers block. Same as settings.snippet.jsonc
+// but invokes `podman exec` instead of `docker exec`.
+//
+// Merge into Zed's settings.json (`zed: open settings`).
+// Prerequisite: the container must be running — `make RUNTIME=podman up`.
+{
+  "agent_servers": {
+    "Claude (sandbox)": {
+      "command": "podman",
+      "args": ["exec", "-i", "agent-sandbox", "claude-agent-acp"],
+      "env": {}
+    },
+    "Codex (sandbox)": {
+      "command": "podman",
+      "args": ["exec", "-i", "agent-sandbox", "codex-acp"],
+      "env": {}
+    }
+  }
+}
