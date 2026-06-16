@@ -10,14 +10,16 @@
 {
   "agent_servers": {
     "Claude (sandbox)": {
+      "type": "custom",
       "command": "docker",
       "args": ["exec", "-i", "agent-sandbox", "claude-agent-acp"],
-      "env": {}
+      "env": {},
     },
     "Codex (sandbox)": {
+      "type": "custom",
       "command": "docker",
       "args": ["exec", "-i", "agent-sandbox", "codex-acp"],
-      "env": {}
-    }
-  }
+      "env": {},
+    },
+  },
 }

@@ -55,6 +55,10 @@ doctor: ## Verify the agents and tools are installed and runnable
 		echo "codex:            $$(codex --version 2>/dev/null || echo MISSING)"; \
 		echo "git:              $$(git --version)"; \
 		echo "ripgrep:          $$(rg --version | head -1)"; \
+		echo "bubblewrap:       $$(bwrap --version 2>/dev/null || echo MISSING)"; \
+		echo "python3:          $$(python3 --version 2>/dev/null || echo MISSING)"; \
+		echo "gh:               $$(gh --version 2>/dev/null | head -1 || echo MISSING)"; \
+		echo "jq:               $$(jq --version 2>/dev/null || echo MISSING)"; \
 		echo "workspace:        $$(pwd)"'
 
 rebuild: ## Rebuild from scratch (e.g. to pull newer agent versions)
