@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         less \
         openssh-client \
         bubblewrap \
-        python3 \
         jq \
         make \
         unzip \
@@ -47,6 +46,12 @@ RUN npm install -g \
 
 # uv: fast Python package manager and project tool.
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
+
+# Python 3.13 via uv (system-wide install + symlinks so `python` resolves to 3.13).
+RUN UV_PYTHON_INSTALL_DIR=/usr/local/share/uv/python uv python install 3.13 \
+    && ln -sf "$(UV_PYTHON_INSTALL_DIR=/usr/local/share/uv/python uv python find 3.13)" /usr/local/bin/python3.13 \
+    && ln -sf /usr/local/bin/python3.13 /usr/local/bin/python3 \
+    && ln -sf /usr/local/bin/python3.13 /usr/local/bin/python
 
 # The base image ships a non-root `node` user (uid/gid 1000); run as it.
 # Pre-create the credential dirs so the named volumes mounted there inherit
