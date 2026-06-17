@@ -45,6 +45,9 @@ RUN npm install -g \
         @openai/codex \
     && npm cache clean --force
 
+# uv: fast Python package manager and project tool.
+RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
+
 # The base image ships a non-root `node` user (uid/gid 1000); run as it.
 # Pre-create the credential dirs so the named volumes mounted there inherit
 # `node` ownership instead of defaulting to root.
