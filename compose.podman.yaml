@@ -11,6 +11,12 @@
 #
 # On macOS/Windows Podman runs inside a VM (like Docker Desktop) and this is
 # generally unnecessary, but it's harmless there.
+#
+# podman-compose creates a pod by default, but Podman cannot combine --pod with
+# --userns. Run the Compose services as standalone containers so keep-id works.
+x-podman:
+  in_pod: false
+
 services:
   sandbox:
     userns_mode: "keep-id:uid=1000,gid=1000"
