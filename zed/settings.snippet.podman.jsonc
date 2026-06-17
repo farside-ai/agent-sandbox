@@ -6,11 +6,13 @@
 {
   "agent_servers": {
     "Claude (sandbox)": {
+      "type": "custom",
       "command": "podman",
       "args": ["exec", "-i", "agent-sandbox", "claude-agent-acp"],
       "env": {}
     },
     "Codex (sandbox)": {
+      "type": "custom",
       "command": "podman",
       "args": ["exec", "-i", "agent-sandbox", "codex-acp"],
       "env": {}
